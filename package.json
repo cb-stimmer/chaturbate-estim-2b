@@ -1,0 +1,27 @@
+{
+  "name": "@paulallen87/chaturbate-commandline-demo",
+  "version": "1.0.0",
+  "description": "Demo app for displaying Chaturbate events in a terminal.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/paulallen87/chaturbate-commandline-demo.git"
+  },
+  "keywords": [
+    "chaturbate"
+  ],
+  "author": "“Paul <“paul.allen.87.555@gmail.com”>",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/paulallen87/chaturbate-commandline-demo/issues"
+  },
+  "homepage": "https://github.com/paulallen87/chaturbate-commandline-demo#readme",
+  "dependencies": {
+    "@paulallen87/chaturbate-browser": "^1.0.2",
+    "@paulallen87/chaturbate-events": "^1.0.1",
+    "colors": "^1.1.2"
+  }
+}
