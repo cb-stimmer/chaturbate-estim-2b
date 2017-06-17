@@ -1,8 +1,9 @@
 Chaturbate Commandline Demo
 =========
 
-
 A demo for displaying Chaturbate events in a terminal.
+
+![screenshot](screenshot.png)
 
 ## Setup (non-docker)
 * Have Google Chrome >= version 59 installed
