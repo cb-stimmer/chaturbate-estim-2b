@@ -29,7 +29,7 @@ DEBUG=chaturbate:* node index.js <USERNAME HERE>
 # or
 DEBUG=chaturbate:* yarn start <USERNAME HERE>
 # or
-DEBUG=chaturbate:* yarn start <USERNAME HERE>
+DEBUG=chaturbate:* npm start <USERNAME HERE>
 ```
 
 ## Docker Usage
