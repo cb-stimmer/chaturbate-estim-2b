@@ -1,6 +1,6 @@
 {
   "name": "@paulallen87/chaturbate-commandline-demo",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Demo app for displaying Chaturbate events in a terminal.",
   "main": "index.js",
   "scripts": {

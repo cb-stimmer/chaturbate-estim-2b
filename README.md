@@ -35,9 +35,12 @@ DEBUG=chaturbate:* npm start <USERNAME HERE>
 
 ## Docker Usage
 
+##### Helper Script
 ```shell
 sh start-docker.sh <USERNAME HERE>
 ```
+
+##### Manually
 
 ```shell
 docker rm -f cb-app
