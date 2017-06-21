@@ -21,7 +21,7 @@
   "homepage": "https://github.com/paulallen87/chaturbate-commandline-demo#readme",
   "dependencies": {
     "@paulallen87/chaturbate-browser": "^1.1.2",
-    "@paulallen87/chaturbate-controller": "^1.0.4",
+    "@paulallen87/chaturbate-controller": "^1.0.5",
     "colors": "^1.1.2"
   }
 }
