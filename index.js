@@ -193,7 +193,7 @@ controller.on('token_balance_update', (e) => {
   console.log(colors.grey(`* token balances: ${e.usernames} -> ${e.tokenAmounts}`));   
 });
 
-browser.start().then(() => {
+browser.start().then(async () => {
   const username = process.argv[2] || process.env['CB_USERNAME'];
-  browser.navigate(username);
+  await browser.profile(username);
 })
