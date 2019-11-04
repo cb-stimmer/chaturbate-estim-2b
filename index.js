@@ -43,6 +43,74 @@ const getUserColor = (user, str) => {
 
   return colors.grey(str);
 }
+const ArrayList = require('arraylist')
+const SerialPort = require('serialport')
+const Readline = require('@serialport/parser-readline')
+const port = new SerialPort('/dev/ttyUSB0', { baudRate: 9600 })
+
+var list = new ArrayList;
+var current_setting = {time:0,level:0}
+var flag_end_stim = false
+
+function push(time_var, level_var) {
+  list.add({time:time_var,level:level_var});
+}
+
+function pop() {
+  var ret = list.first();
+  list.remove(0);
+  return ret;
+}
+
+function set_output(level_var) {
+  var cmd = "A" + level_var + "\n\r";
+  port.write(cmd, function(err) {
+  if (err) {
+    return console.log('Error on write: ', err.message)
+  }
+  console.log('message written', cmd)
+})
+}
+
+function update_output() {
+  if (current_setting.time == 0) {
+    if (list.size()) {
+      current_setting = pop();
+      flag_end_stim = false;
+      set_output(current_setting.level);
+      console.log("Set e-stim to:",current_setting.level, "for:", current_setting.time,"sec")
+    } else if (!flag_end_stim) {
+      console.log("End stim");
+      set_output(0);
+      flag_end_stim = true;
+    }
+  } else {
+    current_setting.time --;
+  }
+
+}
+
+function processTip(tip_val) {
+  if (tip_val <= 1) {
+    push(5,20);
+  } else if (tip_val < 15) {
+    push(15,25);
+  } else if (tip_val < 30) {
+    push(20,30);
+  } else if (tip_val < 50) {
+    push(20,35);
+  } else {
+    push(5,40);
+  }
+}
+/*
+Sp5cial shock - Tip (100) 1 sec painful shock
+  } else if (tip_val == 100) {
+    push(1,50);
+*/
+
+
+setInterval(update_output, 1000)
 
 process.on('exit', () => close(null));
 process.on('SIGTERM', () => close(null));
@@ -54,118 +122,9 @@ controller.on('state_change', (e) => {
   }
 });
 
-controller.on('app_error_log', (e) => {
-  console.log(colors.white(colors.bgRed(`ERROR: ${e.message}`)));  
-});
-
-controller.on('app_notice', (e) => {
-  e.messages.forEach((message) => {
-    console.log(colors.black(colors.bgCyan(`Notice: ${message}`)));  
-  })
-});
-
-controller.on('app_tab_refresh', () => {
-  console.log(colors.grey('* tab refreshed'));  
-});
-
-controller.on('away_mode_cancel', () => {
-  console.log(colors.grey('* away mode canceled'));  
-});
-
-controller.on('clear_app', () => {
-  console.log(colors.grey('* clear app'));  
-});
-
-controller.on('group_show_approve', (e) => {
-  console.log(colors.grey(`* group show approved for ${e.tokensPerMinute} tokens per minute`));  
-});
-
-controller.on('group_show_cancel', () => {
-  console.log(colors.grey(`* group show canceled`));  
-});
-
-controller.on('group_show_request', (e) => {
-  console.log(colors.grey(`* group show request ${e.usersWaiting}/${e.usersRequired} for ${e.tokensPerMinute} tokens per minute`));  
-});
-
-controller.on('hidden_show_approve', (e) => {
-  console.log(colors.grey(`* hidden show approved, hidden is ${e.initialHideCam}`));  
-});
-
-controller.on('kick', (e) => {
-  console.log(`${e.username} was kicked`); 
-});
-
-controller.on('leave_private_room', (e) => {
-  console.log(colors.grey(`* ${username} has left the private show`));  
-});
-
-controller.on('log', (e) => {
-  console.log(colors.grey(`LOG [${e.message}]`));  
-});
-
-controller.on('message_change_request', (e) => {
-  console.log(colors.grey(`* message '${e.subject}' has been changed`)); 
-});
-
-controller.on('personally_kicked', (e) => {
-  console.log(colors.grey(`* you have been kicked because '${e.reason}'`)); 
-});
-
-controller.on('private_message', (e) => {
-  const username = getUserColor(e.user, e.user.username);
-  console.log(`[PRIVATE MESSAGE] ${username}: ${e.message}`);  
-});
-
-controller.on('private_show_approve', (e) => {
-  console.log(colors.grey(`* private show approved for ${e.tokensPerMinute} tokens per minute`)); 
-});
-
-controller.on('private_show_cancel', (e) => {
-  console.log(colors.grey(`* private show canceled`)); 
-});
-
-controller.on('private_show_request', (e) => {
-  console.log(colors.grey(`* private show requested by '${e.requesterUsername}' for ${e.tokensPerMinute} tokens per minute`)); 
-});
-
-controller.on('promotion', (e) => {
-  console.log(colors.grey(`* '${e.toNick}' has been promoted to moderator by ${e.fromNick}`)); 
-});
-
-controller.on('purchase', (e) => {
-  console.log(colors.white(colors.bgMagenta(e.message))); 
-});
 
 controller.on('receive_tip', (e) => {
   console.log(colors.bgYellow(colors.black(`${e.fromUsername} tipped ${e.amount} tokens: ${e.message}`)));   
-});
-
-controller.on('refresh_panel', () => {
-  console.log(colors.grey(`* panel refreshed`)); 
-});
-
-controller.on('revoke', (e) => {
-  console.log(colors.grey(`* '${e.fromNick}' has revoked moderator privs from ${e.toNick}`)); 
-});
-
-controller.on('room_count', (e) => {
-  console.log(colors.black(colors.bgWhite(`${e.count} viewers`))); 
-});
-
-controller.on('room_entry', (e) => {
-  const username = getUserColor(e.user, e.user.username);
-  console.log(`${username} has joined the room`);  
-});
-
-controller.on('room_leave', (e) => {
-  const username = getUserColor(e.user, e.user.username);
-  console.log(`${username} has left the room`);  
-});
-
-controller.on('room_message', (e) => {
-  const username = getUserColor(e.user, e.user.username);
-  console.log(`${username}: ${e.message}`);  
 });
 
 controller.on('settings_update', (e) => {
@@ -177,16 +136,9 @@ controller.on('settings_update', (e) => {
   console.log(colors.grey(`* Spy Price: ${e.spyPrice}`)); 
 });
 
-controller.on('silence', (e) => {
-  console.log(`${e.silencedNick} was silenced by ${e.silencerNick}`);
-});
-
 controller.on('tip', (e) => {
+  processTip(e.amount)
   console.log(colors.bgYellow(colors.black(`${e.user.username} tipped ${e.amount} tokens`)));   
-});
-
-controller.on('title_change', (e) => {
-  console.log(colors.white(colors.bgBlue(`room title changed to: ${e.title}`)));  
 });
 
 controller.on('token_balance_update', (e) => {
