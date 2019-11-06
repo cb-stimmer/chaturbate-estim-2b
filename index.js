@@ -7,6 +7,26 @@ const ChaturbateController = require('@paulallen87/chaturbate-controller');
 const browser = new ChaturbateBrowser();
 const controller = new ChaturbateController(browser);
 
+const ArrayList = require('arraylist')
+const SerialPort = require('serialport')
+const Readline = require('@serialport/parser-readline')
+const port = new SerialPort('/dev/ttyUSB0', { baudRate: 9600 })
+
+const fs = require('fs')
+const sleep = require('sleep');
+
+var list = new ArrayList;
+var current_setting = {time:0,level:0}
+var flag_end_stim = false
+
+var tipLevels = new ArrayList;
+var specialTips = new ArrayList;
+var current_setting = {time:0,level:0}
+var flag_end_stim = false
+var current_setting = {time:0,level:0}
+var lastSettingsMod = 0;
+var settings;
+
 const close = (e) => {
   if (e) console.error(e);
   browser.stop();
@@ -43,14 +63,49 @@ const getUserColor = (user, str) => {
 
   return colors.grey(str);
 }
-const ArrayList = require('arraylist')
-const SerialPort = require('serialport')
-const Readline = require('@serialport/parser-readline')
-const port = new SerialPort('/dev/ttyUSB0', { baudRate: 9600 })
 
-var list = new ArrayList;
-var current_setting = {time:0,level:0}
-var flag_end_stim = false
+function loadSettings() {
+  settings = JSON.parse(fs.readFileSync('settings.json', 'utf-8'))
+  var stats = fs.statSync("settings.json");
+  lastSettingsMod = stats.mtime;
+  tipLevels = settings.tipLevels;
+  specialTips = settings.specialTips;
+  tipLevels.sort(compareValues('ammount','desc'));
+}
+
+function check_settings() {
+  var stats = fs.statSync("settings.json");
+  var currentSettingsMod = stats.mtime;
+  if (currentSettingsMod > lastSettingsMod) {
+    loadSettings();
+    update_mode();
+    console.log("updating settings")
+  }
+}
+
+function compareValues(key, order='asc') {
+  return function(a, b) {
+    if(!a.hasOwnProperty(key) || !b.hasOwnProperty(key)) {
+      // property doesn't exist on either object
+      return 0;
+    }
+
+    const varA = (typeof a[key] === 'string') ?
+      a[key].toUpperCase() : a[key];
+    const varB = (typeof b[key] === 'string') ?
+      b[key].toUpperCase() : b[key];
+
+    let comparison = 0;
+    if (varA > varB) {
+      comparison = 1;
+    } else if (varA < varB) {
+      comparison = -1;
+    }
+    return (
+      (order == 'desc') ? (comparison * -1) : comparison
+    );
+  };
+}
 
 function push(time_var, level_var) {
   list.add({time:time_var,level:level_var});
@@ -65,11 +120,34 @@ function pop() {
 function set_output(level_var) {
   var cmd = "A" + level_var + "\n\r";
   port.write(cmd, function(err) {
-  if (err) {
-    return console.log('Error on write: ', err.message)
+    if (err) {
+      return console.log('Error on write: ', err.message)
+    }
+  })
+}
+
+function set_mode(mode_var) {
+  var cmd = "M" + mode_var + "\n\r";
+  console.log("new mode is:", mode_var);
+  port.write(cmd, function(err) {
+    if (err) {
+      return console.log('Error on write: ', err.message)
+    }
+  })
+}
+
+function set_power(power_var) {
+  var cmd;
+  if (power_var == "H") {
+    cmd = "H\n\r";
+  } else {
+    cmd = "L\n\r";
   }
-  console.log('message written', cmd)
-})
+  port.write(cmd, function(err) {
+    if (err) {
+      return console.log('Error on write: ', err.message)
+    }
+  })
 }
 
 function update_output() {
@@ -87,29 +165,32 @@ function update_output() {
   } else {
     current_setting.time --;
   }
+}
 
+function update_mode() {
+    //set_power(settings.power);
+    //set_mode(settings.mode);
 }
 
 function processTip(tip_val) {
-  if (tip_val <= 1) {
-    push(5,20);
-  } else if (tip_val < 15) {
-    push(15,25);
-  } else if (tip_val < 30) {
-    push(20,30);
-  } else if (tip_val < 50) {
-    push(20,35);
-  } else {
-    push(5,40);
+  for (let specialTip of specialTips) {
+    if (tip_val == specialTip.ammount) {
+      push(specialTip.time,specialTip.level);
+      return(0);
+    }
+  }
+  for (let tipLevel of tipLevels) {
+    if (tip_val >= tipLevel.ammount) {
+      push(tipLevel.time,tipLevel.level);
+      return(0);
+    }
   }
 }
-/*
-Sp5cial shock - Tip (100) 1 sec painful shock
-  } else if (tip_val == 100) {
-    push(1,50);
-*/
 
+loadSettings();
+update_mode();
 
+setInterval(check_settings, 10000)
 setInterval(update_output, 1000)
 
 process.on('exit', () => close(null));
@@ -123,9 +204,10 @@ controller.on('state_change', (e) => {
 });
 
 
-controller.on('receive_tip', (e) => {
-  console.log(colors.bgYellow(colors.black(`${e.fromUsername} tipped ${e.amount} tokens: ${e.message}`)));   
-});
+//controller.on('receive_tip', (e) => {
+//  processTip(e.amount)
+//  console.log(colors.bgYellow(colors.black(`${e.fromUsername} tipped ${e.amount} tokens: ${e.message}`)));   
+//});
 
 controller.on('settings_update', (e) => {
   console.log(colors.grey(`* Allow Privates: ${e.allowPrivates}`)); 
@@ -139,7 +221,7 @@ controller.on('settings_update', (e) => {
 controller.on('tip', (e) => {
   processTip(e.amount)
   console.log(colors.bgYellow(colors.black(`${e.user.username} tipped ${e.amount} tokens`)));   
-});
+});//receive_tip
 
 controller.on('token_balance_update', (e) => {
   console.log(colors.grey(`* token balances: ${e.usernames} -> ${e.tokenAmounts}`));   

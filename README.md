@@ -1,9 +1,16 @@
-Chaturbate Commandline Demo
+Chaturbate E-stim B2 controller
 =========
 
-A demo for displaying Chaturbate events in a terminal.
+An application to control the E-Stim systems B2 based on tips
+Copy settings.json.example to settings.json
+Adjust the settings to your preferences.
+If settings are updated when the application is running it will take 10 seconds to apply them.
 
-![screenshot](screenshot.png)
+## Known Issues / unimplemented features
+
+Only channel A is used at the moment.
+Mode and power setting commands are disabled at the moment.
+
 
 ## Setup (non-docker)
 * Have Google Chrome >= version 59 installed

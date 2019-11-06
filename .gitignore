@@ -58,3 +58,9 @@ typings/
 # dotenv environment variables file
 .env
 
+# Test files
+*_test.js
+
+# package-lock
+package-lock.json
+settings.json
