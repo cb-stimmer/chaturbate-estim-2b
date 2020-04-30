@@ -1,7 +1,7 @@
-Chaturbate E-stim B2 controller
+Chaturbate E-stim 2B controller
 =========
 
-An application to control the E-Stim systems B2 based on tips
+An application to control the E-Stim systems 2B based on tips
 Copy settings.json.example to settings.json
 Adjust the settings to your preferences.
 If settings are updated when the application is running it will take 10 seconds to apply them.
