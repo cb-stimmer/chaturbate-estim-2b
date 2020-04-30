@@ -3,6 +3,7 @@
 const colors = require('colors/safe');
 const ChaturbateBrowser = require('@paulallen87/chaturbate-browser');
 const ChaturbateController = require('@paulallen87/chaturbate-controller');
+const { execSync } = require('child_process');
 
 const browser = new ChaturbateBrowser();
 const controller = new ChaturbateController(browser);
@@ -10,20 +11,21 @@ const controller = new ChaturbateController(browser);
 const ArrayList = require('arraylist')
 const SerialPort = require('serialport')
 const Readline = require('@serialport/parser-readline')
-const port = new SerialPort('/dev/ttyUSB0', { baudRate: 9600 })
+const serialDevice = '/dev/ttyUSB0'
+//const serialDevice = "/tmp/ttyV0"
+//const port = new SerialPort(serialDevice, { baudRate: 9600, dataBits: 8, stopBits: 1, parity: 'none' });
+//const parser = port.pipe(new Readline())
 
 const fs = require('fs')
-const sleep = require('sleep');
+//const sleep = require('sleep');
 
 var list = new ArrayList;
-var current_setting = {time:0,level:0}
+var current_setting = {time:0,levelA:0,levelB:0}
 var flag_end_stim = false
+var flag_reply_rcvd = false
 
 var tipLevels = new ArrayList;
 var specialTips = new ArrayList;
-var current_setting = {time:0,level:0}
-var flag_end_stim = false
-var current_setting = {time:0,level:0}
 var lastSettingsMod = 0;
 var settings;
 
@@ -64,6 +66,21 @@ const getUserColor = (user, str) => {
   return colors.grey(str);
 }
 
+function sendCommand(cmd) {
+  var command = "./send_command.py " + cmd
+  console.log("Sending command", command)
+  var output = execSync(command)
+  output = output.toString()
+  console.log(output)
+//  port.write(cmd, function(err) {
+//    if (err) {
+//      return console.log('Error on write: ', err.message)
+//    }
+//  })
+}
+
+
+
 function loadSettings() {
   settings = JSON.parse(fs.readFileSync('settings.json', 'utf-8'))
   var stats = fs.statSync("settings.json");
@@ -74,6 +91,11 @@ function loadSettings() {
 }
 
 function check_settings() {
+//  port.write("", function(err) {
+//    if (err) {
+//      return console.log('Error on write: ', err.message)
+//    }
+//  })
   var stats = fs.statSync("settings.json");
   var currentSettingsMod = stats.mtime;
   if (currentSettingsMod > lastSettingsMod) {
@@ -107,8 +129,8 @@ function compareValues(key, order='asc') {
   };
 }
 
-function push(time_var, level_var) {
-  list.add({time:time_var,level:level_var});
+function push(time_var, levelA_var, levelB_var) {
+  list.add({time:time_var,levelA:levelA_var,levelB:levelB_var});
 }
 
 function pop() {
@@ -117,37 +139,31 @@ function pop() {
   return ret;
 }
 
-function set_output(level_var) {
-  var cmd = "A" + level_var + "\n\r";
-  port.write(cmd, function(err) {
-    if (err) {
-      return console.log('Error on write: ', err.message)
-    }
-  })
+function set_output(levelA_var,levelB_var) {
+  var cmd = "A" + levelA_var;
+  sendCommand(cmd)
+//  sleep(5)
+  cmd = "B" + levelB_var;
+  sendCommand(cmd)
 }
 
 function set_mode(mode_var) {
-  var cmd = "M" + mode_var + "\n\r";
-  console.log("new mode is:", mode_var);
-  port.write(cmd, function(err) {
-    if (err) {
-      return console.log('Error on write: ', err.message)
-    }
-  })
+  var cmd = "M" + mode_var;
+  console.log("new mode is:", cmd);
+  sendCommand(cmd)
 }
 
 function set_power(power_var) {
   var cmd;
   if (power_var == "H") {
-    cmd = "H\n\r";
+    cmd = "H";
+  } else if (power_var == "Y") {
+    cmd = "Y";
   } else {
-    cmd = "L\n\r";
+    cmd = "L";
   }
-  port.write(cmd, function(err) {
-    if (err) {
-      return console.log('Error on write: ', err.message)
-    }
-  })
+  console.log("new mode is:", cmd);
+  sendCommand(cmd)
 }
 
 function update_output() {
@@ -155,11 +171,11 @@ function update_output() {
     if (list.size()) {
       current_setting = pop();
       flag_end_stim = false;
-      set_output(current_setting.level);
-      console.log("Set e-stim to:",current_setting.level, "for:", current_setting.time,"sec")
+      console.log("Set e-stim to:",current_setting.levelA, "for:", current_setting.time,"sec")
+      set_output(current_setting.levelA,current_setting.levelB);
     } else if (!flag_end_stim) {
       console.log("End stim");
-      set_output(0);
+      set_output(0,0);
       flag_end_stim = true;
     }
   } else {
@@ -168,23 +184,30 @@ function update_output() {
 }
 
 function update_mode() {
-    //set_power(settings.power);
-    //set_mode(settings.mode);
+    set_power(settings.power);
+    set_mode(settings.mode);
 }
 
 function processTip(tip_val) {
   for (let specialTip of specialTips) {
     if (tip_val == specialTip.ammount) {
-      push(specialTip.time,specialTip.level);
+      push(specialTip.time,specialTip.levelA,specialTip.levelB);
       return(0);
     }
   }
   for (let tipLevel of tipLevels) {
     if (tip_val >= tipLevel.ammount) {
-      push(tipLevel.time,tipLevel.level);
+      push(tipLevel.time,tipLevel.levelA,tipLevel.levelB);
       return(0);
     }
   }
+}
+
+function msleep(n) {
+  Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, n);
+}
+function sleep(n) {
+  msleep(n*1000);
 }
 
 loadSettings();
@@ -197,6 +220,8 @@ process.on('exit', () => close(null));
 process.on('SIGTERM', () => close(null));
 process.on('uncaughtException', (e) => close(e));
 
+//parser.on('data', console.log);
+
 controller.on('state_change', (e) => {
   if (e == 'SOCKET_OPEN') {
     console.log(colors.black(colors.bgGreen(`Welcome to ${controller.room}'s room`)));  
@@ -204,10 +229,10 @@ controller.on('state_change', (e) => {
 });
 
 
-//controller.on('receive_tip', (e) => {
-//  processTip(e.amount)
-//  console.log(colors.bgYellow(colors.black(`${e.fromUsername} tipped ${e.amount} tokens: ${e.message}`)));   
-//});
+controller.on('receive_tip', (e) => {
+  processTip(e.amount)
+  console.log(colors.bgYellow(colors.black(`${e.fromUsername} tipped ${e.amount} tokens: ${e.message}`)));   
+});
 
 controller.on('settings_update', (e) => {
   console.log(colors.grey(`* Allow Privates: ${e.allowPrivates}`)); 

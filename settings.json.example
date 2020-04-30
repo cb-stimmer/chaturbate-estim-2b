@@ -1,33 +1,38 @@
 {
-  "mode": 10,
+  "mode": 11,
   "power": "L",
   "tipLevels": [
     {
       "ammount": 1,
       "time": 5,
-      "level": 20
+      "levelA": 20,
+      "levelB": 21
     },
     {
       "ammount": 2,
       "time": 15,
-      "level": 25
+      "levelA": 25,
+      "levelB": 26
     },
     {
       "ammount": 15,
       "time": 20,
-      "level": 30
+      "levelA": 30,
+      "levelB": 31
     },
     {
       "ammount": 30,
       "time": 20,
-      "level": 35
+      "levelA": 35,
+      "levelB": 36
     }
   ],
   "specialTips": [
     {
       "ammount": 50,
       "time": 5,
-      "level": 40
+      "levelA": 45,
+      "levelB": 46
     }
-  ]
+    ]
 }
