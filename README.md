@@ -8,16 +8,36 @@ If settings are updated when the application is running it will take 10 seconds 
 
 ## Known Issues / unimplemented features
 
-Only channel A is used at the moment.
-Mode and power setting commands are disabled at the moment.
+Changing C or D settings is not implemented
 
+## Getting started
+* Use the clone / download button to download the zip file of this repository
+* Unpack the zip file in a new folder.
 
-## Setup (non-docker)
+## Setup Linux
 * Have Google Chrome >= version 59 installed
 * Have NodeJS installed
+* Have Python installed
+Run in folder of chaturbate e-stim controller:
 ```shell
-npm install -G yarn
-yarn install
+npm install
+pip install pyserial
+```
+
+## Setup Windows
+* Have Google Chrome >= version 59 installed
+* Download Windows msi installer for NodeJS form https://nodejs.org/en/download/
+* Run the installer, make sure you select the following options;
+  * Use default options
+  * Make sure "Automatic install necessary tools." is selected.
+  * After clicking finish a command-line window will pop up. Press any letter key two times to continue.
+![screenshot](doc/node_install2.png)
+* Reboot
+* Start "node js command prompt"
+Run in folder of chaturbate e-stim controller:
+```shell
+npm install
+pip install pyserial
 ```
 
 ## Usage
@@ -30,34 +50,3 @@ yarn start <USERNAME HERE>
 npm start <USERNAME HERE>
 ```
 
-## Debug Usage
-
-```shell
-DEBUG=chaturbate:* node index.js <USERNAME HERE>
-# or
-DEBUG=chaturbate:* yarn start <USERNAME HERE>
-# or
-DEBUG=chaturbate:* npm start <USERNAME HERE>
-```
-
-## Docker Usage
-
-##### Helper Script
-```shell
-sh start-docker.sh <USERNAME HERE>
-```
-
-##### Manually
-
-```shell
-docker rm -f cb-app
-
-docker build -t cb/app .
-
-docker run \
-  -ti \
-  --name=cb-app \
-  -e CB_USERNAME="<USERNAME HERE>" \
-  --cap-add=SYS_ADMIN \
-  cb/app
-```
