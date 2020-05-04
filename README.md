@@ -41,7 +41,13 @@ pip install pyserial
 ```
 
 ## Usage
+* Rename settings file from settings.json.example to settings.json
+* Change the serial port to the correct device
+  * In Windows "COM1" for example
+  * In Linux "/dev/ttyUSB0"
+* Change the tip settings to your liking.
 
+In a console / node js command prompt run the following commands from the folder where the chaturbate e-stim controller is unzipped.
 ```shell
 node index.js <USERNAME HERE>
 # or
