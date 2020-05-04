@@ -1,6 +1,7 @@
 {
   "mode": 11,
   "power": "L",
+  "serialPort": "/dev/ttyUSB0",
   "tipLevels": [
     {
       "ammount": 1,

@@ -8,16 +8,16 @@ const { execSync } = require('child_process');
 const browser = new ChaturbateBrowser();
 const controller = new ChaturbateController(browser);
 
+const iswin = process.platform === "win32";
+var sendSerialCommand;
+if (iswin) 
+  {sendSerialCommand = "send_command.py"} 
+else
+  {sendSerialCommand = "./send_command.py"}
+
 const ArrayList = require('arraylist')
-const SerialPort = require('serialport')
-const Readline = require('@serialport/parser-readline')
-const serialDevice = '/dev/ttyUSB0'
-//const serialDevice = "/tmp/ttyV0"
-//const port = new SerialPort(serialDevice, { baudRate: 9600, dataBits: 8, stopBits: 1, parity: 'none' });
-//const parser = port.pipe(new Readline())
 
 const fs = require('fs')
-//const sleep = require('sleep');
 
 var list = new ArrayList;
 var current_setting = {time:0,levelA:0,levelB:0}
@@ -67,16 +67,11 @@ const getUserColor = (user, str) => {
 }
 
 function sendCommand(cmd) {
-  var command = "./send_command.py " + cmd
-  console.log("Sending command", command)
+  var command = "./send_command.py " + cmd + " " + settings.serialPort
+//  console.log("Sending command", command)
   var output = execSync(command)
   output = output.toString()
-  console.log(output)
-//  port.write(cmd, function(err) {
-//    if (err) {
-//      return console.log('Error on write: ', err.message)
-//    }
-//  })
+//  console.log(output)
 }
 
 
@@ -91,11 +86,6 @@ function loadSettings() {
 }
 
 function check_settings() {
-//  port.write("", function(err) {
-//    if (err) {
-//      return console.log('Error on write: ', err.message)
-//    }
-//  })
   var stats = fs.statSync("settings.json");
   var currentSettingsMod = stats.mtime;
   if (currentSettingsMod > lastSettingsMod) {
@@ -142,7 +132,6 @@ function pop() {
 function set_output(levelA_var,levelB_var) {
   var cmd = "A" + levelA_var;
   sendCommand(cmd)
-//  sleep(5)
   cmd = "B" + levelB_var;
   sendCommand(cmd)
 }
@@ -220,7 +209,6 @@ process.on('exit', () => close(null));
 process.on('SIGTERM', () => close(null));
 process.on('uncaughtException', (e) => close(e));
 
-//parser.on('data', console.log);
 
 controller.on('state_change', (e) => {
   if (e == 'SOCKET_OPEN') {

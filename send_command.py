@@ -2,12 +2,14 @@
 import serial
 import sys
 import time
+serialport = sys.argv[2]
 command = sys.argv[1]
 command += '\r'
-ser = serial.Serial('/dev/ttyUSB0', 9600,timeout=10)  # open serial port
+command = command.encode()
+ser = serial.Serial(serialport, 9600,timeout=10)  # open serial port
 ser.write(command)     # write a string
 reply = ser.readline()
-replyList = reply.split(':')
+replyList = reply.split(b':')
 i = 0
 print(reply)
 #print('\n reply len = ')
