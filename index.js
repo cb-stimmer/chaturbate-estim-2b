@@ -67,7 +67,7 @@ const getUserColor = (user, str) => {
 }
 
 function sendCommand(cmd) {
-  var command = "./send_command.py " + cmd + " " + settings.serialPort
+  var command = sendSerialCommand + " " + cmd + " " + settings.serialPort
 //  console.log("Sending command", command)
   var output = execSync(command)
   output = output.toString()
