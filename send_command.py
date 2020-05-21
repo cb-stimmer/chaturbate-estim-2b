@@ -14,11 +14,12 @@ i = 0
 print(reply)
 #print('\n reply len = ')
 #print(len(replyList))
-while reply == 'ERR\r' or len(replyList) != 13:
+while reply == 'ERR\r' or not ( len(replyList) == 9 or len(replyList) == 13 ):
 	++i
 	time.sleep(1)
 	ser.write(command)
 	reply = ser.readline()
+	replyList = reply.split(b':')
 	print(reply)
 	if i ==10:
 		break
