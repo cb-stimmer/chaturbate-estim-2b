@@ -18,6 +18,6 @@ Changing C or D settings is not implemented
 [Github WIKI](https://github.com/cb-stimmer/chaturbate-estim-2b/wiki)
 
 ## Support
-For questions I can be reached at the e-stim systems forums. 
-My username there is [pienk](https://www.e-stim.net/memberlist.php?mode=viewprofile&u=40099). 
-To start a new topic the [2B - 3rd Party Products](https://www.e-stim.net/viewforum.php?f=22) is a good subforum.
+For questions I can be reached at the e-stim systems forums.  
+My username there is [pienk](https://www.e-stim.net/memberlist.php?mode=viewprofile&u=40099).  
+To start a new topic the [2B - 3rd Party Products](https://www.e-stim.net/viewforum.php?f=22) is a good subforum. 
