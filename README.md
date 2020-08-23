@@ -14,45 +14,10 @@ Changing C or D settings is not implemented
 * Use the clone / download button to download the zip file of this repository
 * Unpack the zip file in a new folder.
 
-## Setup Linux
-* Have Google Chrome >= version 59 installed
-* Have NodeJS installed
-* Have Python installed
-Run in folder of chaturbate e-stim controller:
-```shell
-npm install
-pip install pyserial
-```
+## Further information
+[Github WIKI](https://github.com/cb-stimmer/chaturbate-estim-2b/wiki)
 
-## Setup Windows
-* Have Google Chrome >= version 59 installed
-* Download Windows msi installer for NodeJS form https://nodejs.org/en/download/
-* Run the installer, make sure you select the following options;
-  * Use default options
-  * Make sure "Automatic install necessary tools." is selected.
-  * After clicking finish a command-line window will pop up. Press any letter key two times to continue.
-![screenshot](doc/node_install2.png)
-* Reboot
-* Start "node js command prompt"
-Run in folder of chaturbate e-stim controller:
-```shell
-npm install
-pip install pyserial
-```
-
-## Usage
-* Rename settings file from settings.json.example to settings.json
-* Change the serial port to the correct device
-  * In Windows "COM1" for example
-  * In Linux "/dev/ttyUSB0"
-* Change the tip settings to your liking.
-
-In a console / node js command prompt run the following commands from the folder where the chaturbate e-stim controller is unzipped.
-```shell
-node index.js <USERNAME HERE>
-# or
-yarn start <USERNAME HERE>
-# or
-npm start <USERNAME HERE>
-```
-
+## Support
+For questions I can be reached at the e-stim systems forums. 
+My username there is [pienk](https://www.e-stim.net/memberlist.php?mode=viewprofile&u=40099). 
+To start a new topic the [2B - 3rd Party Products](https://www.e-stim.net/viewforum.php?f=22) is a good subforum.
