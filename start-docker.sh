@@ -1,4 +1,6 @@
 #!/bin/bash
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Copyright (C) 2017 paulallen87
 
 docker rm -f cb-app
 

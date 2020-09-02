@@ -1,4 +1,8 @@
 #!/usr/bin/python
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Chaturbate E-stim 2B controller, An application to control the E-Stim systems 2B based on tips
+# Copyright (C) 2020  cb-stimmer
+
 import serial
 import sys
 import time

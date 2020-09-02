@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Copyright (C) 2017 paulallen87
+
 FROM ubuntu:xenial
 MAINTAINER Paul Allen paulallen87555@gmail.com
 
