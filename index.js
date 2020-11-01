@@ -138,11 +138,31 @@ function compareValues(key, order='asc') {
 
 function push(time_var, levelA_var, levelB_var) {
   list.add({time:time_var,levelA:levelA_var,levelB:levelB_var});
+  var tipString = "";
+  if (list.size()) {
+    var tipString = "Shock Cue:";
+    for (let set of list) {
+        tipString += "\nCHA: " + set.levelA + "%, CHB: " + set.levelB + "%, Time:" + set.time + "sec";
+    }
+  }
+  fs.writeFile("tip_cue.txt", tipString, function (err) {
+    if (err) return console.log(err);
+  });
 }
 
 function pop() {
   var ret = list.first();
   list.remove(0);
+  var tipString = "";
+  if (list.size()) {
+    var tipString = "Shock Cue:";
+    for (let set of list) {
+        tipString += "\nCHA: " + set.levelA + "%, CHB: " + set.levelB + "%, Time:" + set.time + "sec";
+    }
+  }
+  fs.writeFile("tip_cue.txt", tipString, function (err) {
+    if (err) return console.log(err);
+  });
   return ret;
 }
 
@@ -179,13 +199,31 @@ function update_output() {
       flag_end_stim = false;
       console.log("Set e-stim to:",current_setting.levelA, "for:", current_setting.time,"sec")
       set_output(current_setting.levelA,current_setting.levelB);
+      var tipString = "Current Setting\nCHA: " + current_setting.levelA + "%\nCHB: " + current_setting.levelB + "%\n";
+      tipString += "Time left: " + current_setting.time + " sec";
+      fs.writeFile("current_setting.txt", tipString, function (err) {
+        if (err) return console.log(err);
+      });
     } else if (!flag_end_stim) {
       console.log("End stim");
       set_output(0,0);
       flag_end_stim = true;
+      var tipString = "E-stim off"
+      fs.writeFile("current_setting.txt", tipString, function (err) {
+        if (err) return console.log(err);
+      });
+      var newtext = "";
+      fs.writeFile("tip_cue.txt", newtext, function (err) {
+        if (err) return console.log(err);
+      });
     }
   } else {
     current_setting.time --;
+    tipString = "Current Setting\nCHA: " + current_setting.levelA + "%\nCHB: " + current_setting.levelB + "%\n";
+    tipString += "Time left: " + current_setting.time + " sec";
+    fs.writeFile("current_setting.txt", tipString, function (err) {
+      if (err) return console.log(err);
+    });
   }
 }
 
@@ -221,6 +259,11 @@ update_mode();
 
 setInterval(check_settings, 10000)
 setInterval(update_output, 1000)
+
+var newtext = "";
+fs.writeFile("tip_cue.txt", newtext, function (err) {
+  if (err) return console.log(err);
+});
 
 process.on('exit', () => close(null));
 process.on('SIGTERM', () => close(null));
