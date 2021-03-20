@@ -1,6 +1,9 @@
 Chaturbate E-stim 2B controller
 =========
 
+## Currently not working due to broken interface to Chaturbate.  
+## I am currently working on a rewrite to fix this issue.  
+
 An application to control the E-Stim systems 2B based on tips.  
 Copy settings.json.example to settings.json
 Adjust the settings to your preferences.
