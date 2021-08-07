@@ -1,5 +1,10 @@
 Chaturbate E-stim 2B controller
 =========
+    
+Newly rewritten version in pyton.   
+Work in progress, alpha quality.     
+    
+    
 
 An application to control the E-Stim systems 2B based on tips.  
 Copy settings.json.example to settings.json
