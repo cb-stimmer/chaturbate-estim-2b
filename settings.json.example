@@ -1,5 +1,5 @@
 {
-  "mode": 11,
+  "mode": trust,
   "power": "L",
   "serialPort": "/dev/ttyUSB0",
   "tipLevels": [
