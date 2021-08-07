@@ -1,3 +1,7 @@
+# SPDX-License-Identifier: LGPL-3.0-or-later
+# Chaturbate parser based on work by cgakdr
+# Copyright (C) 2021 cgakdr
+
 class Tip(object):
     val = 0
     timestamp = 0

@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Chaturbate E-stim 2B controller, Connects Chaturbate chat to E-Stim systems 2B
+# Copyright (C) 2021 cb-stimmer
 
 import asyncio
 import functools
