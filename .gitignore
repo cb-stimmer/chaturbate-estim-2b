@@ -70,3 +70,4 @@ package-lock.json
 settings.json
 
 .idea/
+*.sublime-project
