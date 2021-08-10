@@ -3,7 +3,6 @@
 # Chaturbate E-stim 2B controller, Connects Chaturbate chat to E-Stim systems 2B
 # Copyright (C) 2021 cb-stimmer
 
-import estim2b
 import asyncio
 import functools
 import json
@@ -21,6 +20,8 @@ from numbers import Number
 from queue import Empty, SimpleQueue
 import queue
 import warnings
+
+import estim2b
 
 
 
@@ -60,13 +61,16 @@ class estim2bCom(object):
 			# await asyncio.sleep(timeout)
 			print("end do comm")
 
+	def getAmmount(self, e):
+		return e['ammount']
+
 	def process_tip(self, ammount):
 		# print("processing tip of ",ammount," \n")
 		for lvl in self.specialTips:
 			if lvl["ammount"] == ammount:
 				self.e2b.setOutputs(lvl["levelA"],lvl["levelB"],lvl["time"])
 				return
-		for lvl in self.tipLevels:
+		for lvl in sorted(self.tipLevels, key=self.getAmmount, reverse=True):
 			if ammount >= lvl["ammount"]:
 				self.e2b.setOutputs(lvl["levelA"],lvl["levelB"],lvl["time"])
 				return
