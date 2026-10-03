@@ -1,3 +1,5 @@
+Deprecated, new verion: https://github.com/cb-stimmer/estim-camming
+
 Chaturbate E-stim 2B controller
 =========
     
